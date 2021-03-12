@@ -1,0 +1,82 @@
+﻿@inject SignInManager<AppIdentityUser> signInManager
+@inject UserManager<AppIdentityUser> userManager
+@inject IOrderServices orderServices
+
+@{
+    ViewBag.Title = "Home page Lunch Order CodeGym";
+    string imgLink = String.Empty;
+    AppIdentityUser userSignIn = null;
+    string name = String.Empty;
+    if (signInManager.IsSignedIn(User))
+    {
+        userSignIn = await userManager.GetUserAsync(User);
+        name = $"{userSignIn.FirstName} {userSignIn.LastName}";
+    }
+    int totalAmount = 0;
+}
+
+@model List<FoodOrderCountViewModel>
+<div class="wrapper container">
+    <div class="inner">
+        <div class="row pr-4">
+            @if (await userManager.IsInRoleAsync(userSignIn, "System Administrator"))
+            {
+                <div class="col-sm-3">
+                    <a asp-controller="User" asp-action="Manage" class="btn-primary btn btn--radius">Manage Users</a>
+                </div>
+                <div class="col-sm-3">
+                    <a asp-controller="Role" asp-action="Manage" class="btn-secondary btn btn--radius">Manage Roles</a>
+                </div>
+            }
+            <div class="col-sm-3">
+                <a asp-controller="Food" asp-action="Manage" class="btn--green btn btn--radius">Manage Foods</a>
+            </div>
+            <div class="col-sm-3">
+                <a class="btn--green btn btn--radius">Manage Orders</a>
+            </div>
+        </div>
+        <div class="row mt-5 pr-4">
+            <div class="mt-3 mb-3 col-12">
+                <h1 class="text-center">
+                    <strong>
+                        DANH SÁCH MÓN ĂN THÀNH VIÊN ĐẶT TRONG NGÀY @DateTime.Now.ToString("dd/MM/yyyy")
+                    </strong>
+                </h1>
+            </div>
+            <div class="col-12 row">
+                <table class="table table-hover table-bordered col-12">
+                    <thead>
+                        <tr class="h3 text-center bg-dark text-white">
+                            <th>Food Name</th>
+                            <th>Số lượng</th>
+                            <th>Số tiền</th>
+                            <th>More</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr class="h4">
+                                <td class="align-middle">@item.FoodName</td>
+                                <td class="align-middle text-center">@item.Count</td>
+                                <td class="align-middle text-center">@item.Amount</td>
+                                <td class="text-center align-middle" style="font-size:2.5rem">
+                                    <a href="#">
+                                        <i class="fas fa-angle-double-right text-success"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            { totalAmount += item.Amount; }
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr class="h4 font-weight-bold text-center">
+                            <td colspan="2">Tổng</td>
+                            <td colspan="2">@totalAmount</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

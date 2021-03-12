@@ -1,0 +1,34 @@
+﻿@{
+    ViewBag.Title = "Login Account";
+}
+@model LoginAccountViewModel
+<div class="wrapper container">
+    <div class="inner">
+        <div class="card card-2">
+            <div class="card-body">
+                <h1 class="text-center font-weight-bold">LOGIN FORM</h1>
+                <form enctype="multipart/form-data" class="justify-content-center" asp-controller="Account" asp-action="Login" method="post">
+                    <div asp-validation-summary="All" class="error-summary h5 text-danger font-weight-bold"></div>
+                    <div class="form-wrapper">
+                        <label class="h5" asp-for="Email"></label>
+                        <input asp-for="Email" class="form-control">
+                    </div>
+                    <div class="form-wrapper">
+                        <label class="h5" asp-for="Password"></label>
+                        <input asp-for="Password" class="form-control">
+                    </div>
+                    <div class="checkbox">
+                        <label style="cursor: pointer">
+                            <input asp-for="IsRemember"><i class="ml-1 h5">Remember?</i>
+                        </label>
+                    </div>
+                    <input asp-for="ReturnUrl" value="@ViewBag.ReturnUrl" hidden />
+                    <div class="form-group">
+                        <button type="submit" class="btn btn--radius btn--green">Login now</button>
+                        <button type="reset" class="btn btn--radius btn--green">Reset</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,43 @@
+﻿@{
+    ViewBag.Title = "Create food";
+}
+
+@model CreateFoodViewModel
+<div class="wrapper container">
+    <div class="inner">
+        <div class="h4 directions">
+            <a asp-controller="Home" asp-action="Admin" class="text-decoration-none">Admin areas</a>&gt;<a asp-controller="Food" asp-action="Manage" class="text-decoration-none">Manage food</a>&gt;Create food
+        </div>
+        <div class="row">
+            <div class="mr-auto ml-auto mt-3 mb-3"><h1><strong>TẠO MÓN ĂN</strong></h1></div>
+        </div>
+        <form enctype="multipart/form-data" asp-controller="Food" asp-action="Create" method="post" class="row">
+            <div class="col-4 text-center">
+                <img class="w-100 h-100" src="@Url.Content("~/images/foods/default.png")" alt="Food image" id="thumbnail" />
+                <input type="file" accept="image/*" multiple name="Images" id="customFile" class="form-control" />
+            </div>
+            <div class="col-8">
+                <div class="form-group">
+                    <div class="form-wrapper">
+                        <label class="h3" asp-for="FoodName"></label>
+                        <input asp-for="FoodName" class="form-control">
+                    </div>
+                    <div class="form-wrapper">
+                        <label class="h3" asp-for="Price"></label>
+                        <input asp-for="Price" class="form-control">
+                    </div>
+                </div>
+                <div class="form-wrapper">
+                    <label class="h3" asp-for="IsActive"></label>
+                    <input style="width: 50px; height: 20px;" asp-for="IsActive">
+
+                </div>
+                <div class="form-group">
+                    <button type="submit" id="submit-btn" class="btn btn--radius btn--green">Create</button>
+                    <button type="reset" class="btn btn--radius btn-warning">Reset</button>
+                    <a class="btn btn--radius btn-dark" asp-controller="Food" asp-action="Manage">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

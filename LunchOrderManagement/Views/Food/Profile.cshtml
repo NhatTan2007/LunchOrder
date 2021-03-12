@@ -1,0 +1,72 @@
+﻿@{
+    ViewBag.Title = "Profile food";
+
+    string imgLink = String.Empty;
+    if (Model.Images.Count > 0)
+    {
+        imgLink = Url.Content(@$"~/images/foods/{Model.Images.ToList()[0].FileName}");
+    }
+    else
+    {
+        imgLink = Url.Content("~/images/foods/default.png");
+    }
+}
+
+@model FoodViewModel
+<div class="wrapper container">
+    <div class="inner">
+        <div class="h4 directions">
+            <a asp-controller="Home" asp-action="Admin" class="text-decoration-none">Admin areas</a>&gt;<a asp-controller="Food" asp-action="Manage" class="text-decoration-none">Manage food</a>&gt;@Model.FoodName
+        </div>
+        <div class="row">
+            <div class="mr-auto ml-auto mt-3 mb-3"><h1><strong>PROFILE FOOD</strong></h1></div>
+        </div>
+        <div class="row">
+            <div class="col-4">
+                <img class="w-100 h-100" src="@imgLink" alt="Food image" />
+            </div>
+            <div class="col-8">
+                <div class="form-group">
+                    <div class="form-wrapper">
+                        <label class="h3" asp-for="FoodName"></label>
+                        <input asp-for="FoodName" class="form-control" readonly>
+                    </div>
+                    <div class="form-wrapper">
+                        <label class="h3" asp-for="Price"></label>
+                        <input asp-for="Price" class="form-control" readonly>
+                    </div>
+                </div>
+                <div class="form-wrapper">
+                    <label class="h3" asp-for="IsActive"></label>
+                    <input style="width: 50px; height: 20px;" asp-for="IsActive" disabled>
+
+                </div>
+                <div class="form-group">
+                    <a asp-controller="Food" asp-action="Edit" asp-route-foodId="@Model.FoodId" class="btn btn--radius btn-primary">Edit</a>
+                    <a class="btn btn--radius btn-danger" data-toggle="modal" data-target="#confirmDelFoodModal">Completely delete</a>
+                    <a asp-controller="Food" asp-action="Manage" class="btn btn--radius btn-dark">Back</a>
+                </div>
+            </div>
+        </div>
+        <!-- Modal -->
+        <div id="confirmDelFoodModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title">Delete food confirm</h3>
+                    </div>
+                    <div class="modal-body">
+                        <p class="h4">Are you sure want to remove this food?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn btn--radius btn-danger" asp-controller="Food" asp-action="Delete" asp-route-foodId="@Model.FoodId">Confirm</a>
+                        <button type="button" class="btn btn-dark" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

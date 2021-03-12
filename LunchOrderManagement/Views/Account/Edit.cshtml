@@ -1,0 +1,103 @@
+﻿@{
+    ViewBag.Title = "Edit Account";
+    string phoneNumber = String.Empty;
+    for (int i = 0; i < Model.PhoneNumber.Length && Model.PhoneNumber.Length > 0; i++)
+    {
+        if (i < Model.PhoneNumber.Length - 4)
+        {
+            phoneNumber += "*";
+        }
+        else
+        {
+            phoneNumber += Model.PhoneNumber[i];
+        }
+    }
+
+    string email = String.Empty;
+    for (int i = 0; i < Model.Email.Length && Model.Email.Length > 0; i++)
+    {
+        if (i < 5)
+        {
+            email += "*";
+        }
+        else
+        {
+            email += Model.Email[i];
+        }
+    }
+}
+
+@model EditAccountViewModel
+<div class="wrapper container">
+    <div class="inner">
+        <div class="card card-2">
+            <div class="card-heading"></div>
+            <div class="card-body">
+                <form enctype="multipart/form-data" class="justify-content-center" asp-controller="Account" asp-action="Edit" method="post">
+                    <div asp-validation-summary="ModelOnly" class="error-summary h4 text-danger font-weight-bold"></div>
+                    <h1 class="font-weight-bold mb-5 text-center text-uppercase">Edit @Model.FullName's Profile</h1>
+                    <div class="form-group">
+                        <div class="form-wrapper">
+                            <label class="h3" asp-for="FirstName"></label>
+                            <input asp-for="FirstName" class="form-control">
+                            <span asp-validation-for="FirstName" class="h4"></span>
+                        </div>
+                        <div class="form-wrapper">
+                            <label class="h3" asp-for="LastName"></label>
+                            <input asp-for="LastName" class="form-control">
+                            <span asp-validation-for="LastName" class="h4"></span>
+                        </div>
+                    </div>
+                    <div class="form-wrapper">
+                        <label class="h3" asp-for="Email"></label>
+                        <input asp-for="Email" value="" placeholder="@email (Leave blank if you don't change)" class="form-control">
+                        <span asp-validation-for="Email" class="h4"></span>
+                    </div>
+                    <div class="form-wrapper">
+                        <label class="h3" asp-for="OldPassword"></label>
+                        <input asp-for="OldPassword" class="form-control">
+                        <span asp-validation-for="OldPassword" class="h4"></span>
+                    </div>
+                    <div class="form-wrapper">
+                        <label class="h3" asp-for="NewPassword"></label>
+                        <input asp-for="NewPassword" class="form-control">
+                        <span asp-validation-for="NewPassword" class="h4"></span>
+                    </div>
+                    <div class="form-wrapper">
+                        <label class="h3" asp-for="ConfirmNewPasword"></label>
+                        <input asp-for="ConfirmNewPasword" class="form-control">
+                        <span asp-validation-for="ConfirmNewPasword" class="h4"></span>
+                    </div>
+                    <div class="form-wrapper">
+                        <label class="h3" asp-for="ClassId"></label>
+                        <select asp-for="ClassId" class="form-control">
+                            @foreach (Class classCg in Model.Classes)
+                            {
+                                if (Model.ClassId == classCg.ClassId)
+                                {
+                                    <option value="@classCg.ClassId" selected>@classCg.ClassName</option>
+                                }
+                                else
+                                {
+                                    <option value="@classCg.ClassId">@classCg.ClassName</option>
+                                }
+                            }
+                        </select>
+                        <span asp-validation-for="ClassId" class="h4"></span>
+                    </div>
+                    <div class="form-wrapper">
+                        <label class="h3" asp-for="PhoneNumber"></label>
+                        <input asp-for="PhoneNumber" value="" placeholder="@phoneNumber (Leave blank if you don't change)" class="form-control">
+                        <span asp-validation-for="PhoneNumber" class="h4"></span>
+                    </div>
+                    <input asp-for="UserId" value="@Model.UserId" hidden/>
+                    <div class="form-group">
+                        <button type="submit" id="submit-btn" class="btn btn--radius btn--green">Submit</button>
+                        <button type="reset" class="btn btn--radius btn-warning">Reset</button>
+                        <a class="btn btn--radius btn-dark" asp-controller="Account" asp-action="Profile" asp-route-userId="@Model.UserId">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

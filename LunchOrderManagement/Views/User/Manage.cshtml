@@ -1,0 +1,100 @@
+﻿@{
+    ViewBag.Title = "Users management";
+}
+@model PaginationViewModel<UserViewModel>
+<div class="wrapper container">
+    <div class="inner">
+        <div class="h4 directions row pr-4">
+            <a asp-controller="Home" asp-action="Admin" class="text-decoration-none">Admin areas</a>&gt;Manage users
+        </div>
+        <div class="row pr-4">
+            <a class="btn btn--radius btn--green col-2 mb-2" asp-controller="User" asp-action="Create">Create users</a>
+        </div>
+        <div class="row pr-4">
+            <div asp-validation-summary="ModelOnly" class="col-12"></div>
+        </div>
+
+        <div class="product-pagination">
+            <div class="row pr-4 pl-4 mb-2">
+                <select class="form-control text-center col-2" style="padding-left:6rem" id="pageSize" onchange="changePageSize(this)">
+                    @foreach (var item in Model.PageSizeItem)
+                    {
+                        if ((int)ViewBag.pageSize == item)
+                        {
+                            <option name="pageSize" selected value="@item">@item</option>
+                        }
+                        else
+                        {
+                            <option name="pageSize" value="@item">@item</option>
+                        }
+                    }
+                </select>
+                @if (ViewBag.keyword != null)
+                {
+                    <input class="form-control col-10" type="search" value="@ViewBag.keyword" name="keyword" onchange="searchKeyWord(this)" placeholder="Search" />
+                }
+                else
+                {
+                    <input class="form-control col-10" type="search" value="" name="keyword" onchange="searchKeyWord(this)" placeholder="Search" />
+                }
+            </div>
+            <div class="row pr-4">
+                <table class="table table-bordered table-hover col-12">
+                    <thead class="thead-light">
+                        <tr class="text-center h4">
+                            <th class="align-middle">Id</th>
+                            <th class="align-middle">Full name</th>
+                            <th class="align-middle">Email</th>
+                            <th class="align-middle">Roles</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (UserViewModel user in Model.Items)
+                        {
+                            <tr class="h4">
+                                <td class="align-middle">@user.Id</td>
+                                <td class="align-middle">@user.FullName</td>
+                                <td class="align-middle">@user.Email</td>
+                                <td>
+                                    <table class="m-auto">
+                                        @foreach (string rl in user.RolesName)
+                                        {
+                                            <tr class="table-hover"><td class="border-0 text-center">@rl</td></tr>
+                                        }
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="align-middle" colspan="4">
+                                    <span class="mr-4 h4">Action</span>
+                                    <a class="btn btn-warning" asp-controller="User" asp-action="Edit" asp-route-userId="@user.Id" style="line-height: 3rem;">Edit</a>
+                                    <a class="btn btn-danger" id="del_@user.Id" style="line-height: 3rem;" onclick="confirmDel(this, '@user.Id')">Delete</a>
+                                    <span class="ml-2" id="@user.Id" hidden>
+                                        <span class="mr-2 h4">Are you sure want to delete this user?</span>
+                                        <a class="btn btn-danger" asp-controller="User" asp-action="Delete" asp-route-userId="@user.Id" style="line-height: 3rem;" onclick="afterConfirmDel('@user.Id')">Confirm</a>
+                                        <a class="btn btn-primary" href="#" style="line-height: 3rem;" onclick="afterConfirmDel('@user.Id')">Disable</a>
+                                        <a class="btn btn-dark" style="line-height: 3rem;" onclick="afterConfirmDel('@user.Id')">Cancel</a>
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="row pr-4">
+                <div>
+                    <ul class="pagination col-12 h3 justify-content-center" id="pagination">
+                        <li class="page-item"><a class="page-link disabled" asp-controller="User" asp-action="Manage" asp-route-page="1" asp-route-pageSize="@Model.Pager.PageSize" asp-route-keyword="@ViewBag.keyword">First</a></li>
+                        <li class="page-item"><a class="page-link" asp-controller="User" asp-action="Manage" asp-route-page="@Model.Pager.PreviousPage" asp-route-pageSize="@Model.Pager.PageSize" asp-route-keyword="@ViewBag.keyword">Previous</a></li>
+                        @for (int i = Model.Pager.StartPage; i <= Model.Pager.EndPage; i++)
+                        {
+                            <li class="page-item"><a class="page-link" asp-controller="User" asp-action="Manage" asp-route-page="@i" asp-route-pageSize="@Model.Pager.PageSize" asp-route-keyword="@ViewBag.keyword">@i</a></li>
+                        }
+                        <li class="page-item"><a class="page-link" asp-controller="User" asp-action="Manage" asp-route-page="@Model.Pager.NextPage" asp-route-pageSize="@Model.Pager.PageSize" asp-route-keyword="@ViewBag.keyword">Next</a></li>
+                        <li class="page-item"><a class="page-link" asp-controller="User" asp-action="Manage" asp-route-page="@Model.Pager.TotalPages" asp-route-pageSize="@Model.Pager.PageSize" asp-route-keyword="@ViewBag.keyword">Last</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

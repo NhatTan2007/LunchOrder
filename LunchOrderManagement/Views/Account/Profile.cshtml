@@ -1,0 +1,71 @@
+﻿@{
+    ViewBag.Title = $"Profile {Model.FullName}";
+    string phoneNumber = String.Empty;
+    for (int i = 0; i < Model.PhoneNumber.Length; i++)
+    {
+        if(i < Model.PhoneNumber.Length - 4)
+        {
+            phoneNumber += "*";
+        }
+        else
+        {
+            phoneNumber += Model.PhoneNumber[i];
+        }
+    }
+    string email = String.Empty;
+    for (int i = 0; i < Model.Email.Length; i++)
+    {
+        if (i < 5)
+        {
+            email += "*";
+        }
+        else
+        {
+            email += Model.Email[i];
+        }
+    }
+}
+
+@model AccountViewModel
+<div class="wrapper container">
+    <div class="inner">
+        <div class="card card-2">
+            <div class="card-heading"></div>
+            <div class="card-body">
+                <div class="justify-content-center">
+                    <div asp-validation-summary="ModelOnly" class="error-summary h4 text-danger font-weight-bold"></div>
+                    <h1 class="font-weight-bold mb-5 text-center text-uppercase"><strong class="text-primary">@Model.FullName's</strong> profile</h1>
+                    <div class="form-group">
+                        <div class="form-wrapper">
+                            <label class="h3 text-info" asp-for="FirstName"></label>
+                            <span class="form-control bg-light">@Model.FirstName</span>
+                        </div>
+                        <div class="form-wrapper">
+                            <label class="h3 text-info" asp-for="LastName"></label>
+                            <span class="form-control bg-light">@Model.LastName</span>
+                        </div>
+                    </div>
+                    <div class="form-wrapper">
+                        <label class="h3 text-info" asp-for="Email"></label>
+                        <span class="form-control bg-light">@email</span>
+                    </div>
+                    <div class="form-wrapper">
+                        <label class="h3 text-info" asp-for="ClassName"></label>
+                        <span class="form-control bg-light">@Model.ClassName</span>
+                    </div>
+                    <div class="form-wrapper">
+                        <label class="h3 text-info" asp-for="PhoneNumber"></label>
+                        <span class="form-control bg-light">@phoneNumber</span>
+                    </div>
+                    <div class="form-wrapper">
+                        <span class="text-primary">@ViewData["Sendmail"]</span>
+                    </div>
+                    <div class="form-group mt-4">
+                        <a asp-controller="Account" asp-action="Edit" asp-route-userId="@Model.UserId" class="btn btn--radius btn--green">Edit</a>
+                        <a class="btn btn--radius btn-dark" asp-controller="Home" asp-action="Index">Back</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

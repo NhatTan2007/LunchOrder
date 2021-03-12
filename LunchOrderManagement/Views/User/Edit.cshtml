@@ -1,0 +1,89 @@
+﻿@{
+    ViewBag.Title = "Edit user";
+}
+
+@model EditUserViewModel
+<div class="wrapper container">
+    <div class="inner">
+        <div class="card card-2">
+            <div class="card-heading"></div>
+            <div class="card-body">
+                <form enctype="multipart/form-data" class="justify-content-center" asp-controller="User" asp-action="Edit" method="post">
+                    <div asp-validation-summary="All" class="error-summary h4 text-danger font-weight-bold"></div>
+                    <h1 class="font-weight-bold mb-5 text-center text-uppercase">Edit user</h1>
+                    <div class="form-group">
+                        <div class="form-wrapper">
+                            <label class="h3" asp-for="FirstName"></label>
+                            <input asp-for="FirstName" class="form-control">
+                        </div>
+                        <div class="form-wrapper">
+                            <label class="h3" asp-for="LastName"></label>
+                            <input asp-for="LastName" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-wrapper">
+                        <label class="h3" asp-for="Email"></label>
+                        <input asp-for="Email" class="form-control">
+                    </div>
+                    <div class="form-wrapper">
+                        <label class="h3" asp-for="ClassId"></label>
+                        <select asp-for="ClassId" class="form-control">
+                            @foreach (Class classCg in Model.Classes)
+                            {
+                                <option value="@classCg.ClassId">@classCg.ClassName</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-wrapper">
+                        <label class="h3" asp-for="Roles"></label>
+                        <select asp-for="RoleIds" class="form-control js-basic-multiple" id="roles" multiple>
+                            @foreach (RoleViewModel rl in Model.Roles)
+                            {
+                                if (Model.RolesName.Contains(rl.RoleName))
+                                {
+                                    <option selected="selected" value="@rl.RoleId">@rl.RoleName</option>
+                                }
+                                else
+                                {
+                                    <option value="@rl.RoleId">@rl.RoleName</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="form-wrapper">
+                        <label class="h3" asp-for="PhoneNumber"></label>
+                        <input asp-for="PhoneNumber" class="form-control">
+                    </div>
+                    <input asp-for="UserId" value="@Model.UserId" hidden />
+                    <div class="form-group">
+                        <button type="submit" id="submit-btn" class="btn btn--radius btn--green">Submit</button>
+                        <button type="reset" class="btn btn--radius btn-warning">Reset</button>
+                        <a class="btn btn--radius btn-danger" data-toggle="modal" data-target="#confirmResetPasswordModal">Reset password</a>
+                        <a class="btn btn--radius btn-dark" asp-controller="User" asp-action="Manage">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div id="confirmResetPasswordModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title">Reset password confirm</h3>
+                    </div>
+                    <div class="modal-body">
+                        <p class="h4">Are you sure want to reset password this user?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn btn--radius btn-danger" asp-controller="Account" asp-action="ResetPassword" asp-route-userId="@Model.UserId">Confirm</a>
+                        <button type="button" class="btn btn-dark" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

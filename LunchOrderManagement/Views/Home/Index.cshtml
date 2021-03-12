@@ -1,0 +1,155 @@
+﻿@inject SignInManager<AppIdentityUser> signInManager
+@inject UserManager<AppIdentityUser> userManager
+@inject IOrderServices orderServices
+
+@{
+    ViewBag.Title = "Home page Lunch Order CodeGym";
+    string imgLink = String.Empty;
+    AppIdentityUser userSignIn = null;
+    OrderDetail order = null;
+    string name = String.Empty;
+    if (signInManager.IsSignedIn(User))
+    {
+        userSignIn = await userManager.GetUserAsync(User);
+        order = await orderServices.GetOrderToday(userSignIn.Id);
+        name = $"{userSignIn.FirstName} {userSignIn.LastName}";
+
+    }
+}
+
+@model PaginationViewModel<Food>
+<div class="wrapper container">
+    <div class="inner">
+        <div class="row">
+            @if (order != null)
+            {
+                <div class="mt-3 mb-3 col-12">
+                    <h1 class="text-center text-danger">
+                        <strong>
+                            @name đã đặt <span class="text-success">@order.Food.Name</span> trong ngày @DateTime.Now.ToString("dd/MM/yyyy")
+                        </strong>
+                    </h1>
+                    <div class="col-12 text-center">
+                        <a class="btn btn--radius btn-danger" asp-controller="Order" asp-action="Cancel" asp-route-userId="@userSignIn.Id">Cancel order</a>
+                    </div>
+                </div>
+                <hr class="col-8" style="height: 2px; background-color:gray">
+            }
+            <div class="mt-3 mb-3 col-12">
+                <h1 class="text-center">
+                    <strong>
+                        DANH SÁCH MÓN ĂN TRONG NGÀY @DateTime.Now.ToString("dd/MM/yyyy")
+                    </strong>
+                </h1>
+            </div>
+            @if (order != null)
+            {
+                <div class="mt-3 mb-3 col-12">
+                    <h3 class="text-center text-info font-weight-bold">
+                        <strong>
+                            CLICK MÓN ĂN ĐỂ THAY ĐỔI ORDER
+                        </strong>
+                    </h3>
+                </div>
+            }
+            else
+            {
+                <div class="mt-3 mb-3 col-12">
+                    <h3 class="text-center text-info font-weight-bold">
+                        <strong>
+                            CLICK MÓN ĂN ĐỂ ORDER
+                        </strong>
+                    </h3>
+                </div>
+            }
+
+        </div>
+        <div class="product-pagination">
+            <div class="row pr-4 pl-4 mb-2">
+                <select class="form-control text-center col-2" style="padding-left:6rem" onchange="changePageSize(this)" id="pageSize">
+                    @foreach (var item in Model.PageSizeItem)
+                    {
+                        if ((int)ViewBag.pageSize == item)
+                        {
+                            <option name="pageSize" selected value="@item">@item</option>
+                        }
+                        else
+                        {
+                            <option name="pageSize" value="@item">@item</option>
+                        }
+                    }
+                </select>
+                @if (ViewBag.keyword != null)
+                {
+                    <input class="form-control col-10" type="search" value="@ViewBag.keyword" name="keyword" onchange="searchKeyWord(this)" placeholder="Search" />
+                }
+                else
+                {
+                    <input class="form-control col-10" type="search" value="" name="keyword" onchange="searchKeyWord(this)" placeholder="Search" />
+                }
+            </div>
+            <div class="row">
+                @foreach (Food food in Model.Items)
+                {
+                    if (food.FoodImages.Count > 0)
+                    {
+                        imgLink = Url.Content(@$"~/images/foods/{food.FoodImages.ToList()[0].FileName}");
+                    }
+                    else
+                    {
+                        imgLink = imgLink = Url.Content(@$"~/images/foods/default.png");
+                    }
+                <div class="col-3 position-relative mb-2">
+                    @if (order != null)
+                    {
+                        if (food.FoodId != order.FoodId)
+                        {
+                            <div class="food-infor">
+                                <a asp-controller="Order" asp-action="Edit" asp-route-foodId="@food.FoodId" onclick="return confirmChangeOrder()" class="text-decoration-none">
+                                    <img src="@imgLink" alt="@food.Name" class="food-thumbnails m-auto d-block" />
+                                    <span class="text-center d-block h3">@food.Name</span>
+                                    <span class="text-center d-block h4">Giá: @food.Price VNĐ</span>
+                                </a>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="food-infor">
+                                <a asp-controller="Order" asp-action="Edit" asp-route-foodId="@food.FoodId" onclick="return existsFoodInOrder()" class="text-decoration-none">
+                                    <img src="@imgLink" alt="@food.Name" class="food-thumbnails m-auto d-block" />
+                                    <span class="text-center d-block h3">@food.Name</span>
+                                    <span class="text-center d-block h4">Giá: @food.Price VNĐ</span>
+                                </a>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="food-infor">
+                            <a asp-controller="Order" asp-action="Create" asp-route-foodId="@food.FoodId" class="text-decoration-none">
+                                <img src="@imgLink" alt="@food.Name" class="food-thumbnails m-auto d-block" />
+                                <span class="text-center d-block h3">@food.Name</span>
+                                <span class="text-center d-block h4">Giá: @food.Price VNĐ</span>
+                            </a>
+                        </div>
+                    }
+                </div>
+                }
+            </div>
+            <div>
+                <div>
+                    <ul class="pagination col-12 h3 justify-content-center" id="pagination">
+                        <li class="page-item"><a class="page-link disabled" asp-controller="Home" asp-action="Index" asp-route-page="1" asp-route-pageSize="@Model.Pager.PageSize" asp-route-keyword="@ViewBag.keyword">First</a></li>
+                        <li class="page-item"><a class="page-link" asp-controller="Home" asp-action="Index" asp-route-page="@Model.Pager.PreviousPage" asp-route-pageSize="@Model.Pager.PageSize" asp-route-keyword="@ViewBag.keyword">Previous</a></li>
+                        @for (int i = Model.Pager.StartPage; i <= Model.Pager.EndPage; i++)
+                        {
+                            <li class="page-item"><a class="page-link" asp-controller="Home" asp-action="Index" asp-route-page="@i" asp-route-pageSize="@Model.Pager.PageSize" asp-route-keyword="@ViewBag.keyword">@i</a></li>
+                        }
+                        <li class="page-item"><a class="page-link" asp-controller="Home" asp-action="Index" asp-route-page="@Model.Pager.NextPage" asp-route-pageSize="@Model.Pager.PageSize" asp-route-keyword="@ViewBag.keyword">Next</a></li>
+                        <li class="page-item"><a class="page-link" asp-controller="Home" asp-action="Index" asp-route-page="@Model.Pager.TotalPages" asp-route-pageSize="@Model.Pager.PageSize" asp-route-keyword="@ViewBag.keyword">Last</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

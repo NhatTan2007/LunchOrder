@@ -1,0 +1,97 @@
+﻿@inject SignInManager<AppIdentityUser> signInManager
+@inject UserManager<AppIdentityUser> userManager
+@inject IOrderServices orderServices
+
+@{
+    ViewBag.Title = "Foods management";
+    string imgLink = String.Empty;
+    AppIdentityUser userSignIn = null;
+    string name = String.Empty;
+    if (signInManager.IsSignedIn(User))
+    {
+        userSignIn = await userManager.GetUserAsync(User);
+        name = $"{userSignIn.FirstName} {userSignIn.LastName}";
+    }
+}
+
+@model PaginationViewModel<Food>
+<div class="wrapper container">
+    <div class="inner">
+        <div class="h4 directions">
+            <a asp-controller="Home" asp-action="Admin" class="text-decoration-none">Admin areas</a>&gt;Manage foods
+        </div>
+        <div>
+            <a class="btn btn--radius btn--green" asp-controller="Food" asp-action="Create">Create new food</a>
+        </div>
+        <div class="row">
+            <h1 class="col-12 text-info text-center font-weight-bold mb-5">DANH SÁCH MÓN ĂN HIỆN CÓ</h1>
+        </div>
+        <div class="product-pagination">
+            <div class="row pr-4 pl-4 mb-2">
+                <select class="form-control text-center col-2" style="padding-left:6rem" onchange="changePageSize(this)" id="pageSize">
+                    @foreach (var item in Model.PageSizeItem)
+                    {
+                        if ((int)ViewBag.pageSize == item)
+                        {
+                            <option name="pageSize" selected value="@item">@item</option>
+                        }
+                        else
+                        {
+                            <option name="pageSize" value="@item">@item</option>
+                        }
+                    }
+                </select>
+                @if (ViewBag.keyword != null)
+                {
+                    <input class="form-control col-10" type="search" value="@ViewBag.keyword" name="keyword" onchange="searchKeyWord(this)" placeholder="Search" />
+                }
+                else
+                {
+                    <input class="form-control col-10" type="search" value="" name="keyword" onchange="searchKeyWord(this)" placeholder="Search" />
+                }
+            </div>
+            <div class="row">
+                @foreach (Food food in Model.Items)
+                {
+                    if (food.FoodImages.Count > 0)
+                    {
+                        imgLink = Url.Content(@$"~/images/foods/{food.FoodImages.ToList()[0].FileName}");
+                    }
+                    else
+                    {
+                        imgLink = imgLink = Url.Content(@$"~/images/foods/default.png");
+                    }
+                    <div class="col-3">
+                        <a asp-controller="Food" asp-action="Profile" asp-route-foodId="@food.FoodId" class="text-decoration-none">
+                            <img src="@imgLink" alt="@food.Name" class="food-thumbnails m-auto d-block" />
+                            @if (food.IsActive)
+                            {
+                                <span class="text-center d-block h3">@food.Name</span>
+                                <span class="text-center d-block h4">Giá: @food.Price VNĐ</span>
+                            }
+                            else
+                            {
+                                <span class="text-center d-block h3 text-black-50">@food.Name</span>
+                                <span class="text-center d-block h4 text-black-50">Giá: @food.Price VNĐ</span>
+                            }
+                        </a>
+                    </div>
+                }
+            </div>
+            <div>
+                <div>
+                    <ul class="pagination col-12 h3 justify-content-center" id="pagination">
+                        <li class="page-item"><a class="page-link" asp-controller="Food" asp-action="Manage" asp-route-page="1" asp-route-pageSize="@Model.Pager.PageSize" asp-route-keyword="@ViewBag.keyword">First</a></li>
+                        <li class="page-item"><a class="page-link" asp-controller="Food" asp-action="Manage" asp-route-page="@Model.Pager.PreviousPage" asp-route-pageSize="@Model.Pager.PageSize" asp-route-keyword="@ViewBag.keyword">Previous</a></li>
+                        @for (int i = Model.Pager.StartPage; i <= Model.Pager.EndPage; i++)
+                        {
+                            <li class="page-item"><a class="page-link" asp-controller="Food" asp-action="Manage" asp-route-page="@i" asp-route-pageSize="@Model.Pager.PageSize" asp-route-keyword="@ViewBag.keyword">@i</a></li>
+                        }
+                        <li class="page-item"><a class="page-link" asp-controller="Food" asp-action="Manage" asp-route-page="@Model.Pager.NextPage" asp-route-pageSize="@Model.Pager.PageSize" asp-route-keyword="@ViewBag.keyword">Next</a></li>
+                        <li class="page-item"><a class="page-link" asp-controller="Food" asp-action="Manage" asp-route-page="@Model.Pager.TotalPages" asp-route-pageSize="@Model.Pager.PageSize" asp-route-keyword="@ViewBag.keyword">Last</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

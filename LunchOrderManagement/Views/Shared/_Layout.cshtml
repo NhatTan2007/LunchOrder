@@ -1,0 +1,79 @@
+﻿@inject SignInManager<AppIdentityUser> _signInManager
+@inject UserManager<AppIdentityUser> _userManager
+@{ 
+    var user = await _userManager.GetUserAsync(User);
+    string fullName = string.Empty;
+    if (User != null && user != null)
+    {
+        if (_signInManager.IsSignedIn(User))
+        {
+            fullName = $"{user.FirstName} {user.LastName}";
+        }
+    }
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    @RenderSection("extraFont", false)
+    <link href="~/lib/bootstrap-v4/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w==" crossorigin="anonymous" />
+    <link href="~/images/favicon.jpeg" rel="shortcut icon" />
+    <link rel="stylesheet" href="~/css/style.css">
+    @RenderSection("extraCss", required: false)
+</head>
+<body>
+    <header>
+    </header>
+    <nav class="nav">
+        <div class="container">
+            <div class="logo">
+                <a href="~/"><img src="~/images/logo-white.png" alt="Codegym logo" /></a>
+            </div>
+            <div id="mainListDiv" class="main_list">
+                <ul class="navlinks">
+                    @if (_signInManager.IsSignedIn(User))
+                    {
+                        if (User.IsInRole("System Administrator") || User.IsInRole("Manager"))
+                        {
+                            <li><a asp-controller="Home" asp-action="Admin">Admin areas</a></li>
+                        }
+                        <li><a asp-controller="Account" asp-action="Profile" asp-route-userId="@user.Id">@fullName</a></li>
+                        <li><a class="btn btn-danger btn--radius" style="line-height:4rem; border-radius: 10px" asp-controller="Account" asp-action="Signout">Signout</a></li>
+                    }
+                    else
+                    {
+                        <li><a asp-controller="Account" asp-action="Login">Login</a></li>
+                        <li><a asp-controller="Account" asp-action="Register">Register</a></li>
+                    }
+
+                </ul>
+            </div>
+            <span class="navTrigger">
+                <i></i>
+                <i></i>
+                <i></i>
+            </span>
+        </div>
+    </nav>
+    <main class="home conta">
+        @RenderBody()
+    </main>
+    <footer>
+    </footer>
+    <script src="~/lib/jquery/jquery.min.js"></script>
+    <script src="~/lib/jquery-validate/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validate/jquery.validate.unobtrusive.js"></script>
+    <script src="~/lib/bootstrap-v4/js/bootstrap.min.js"></script>
+
+    <!-- Jquery needed -->
+    <script src="~/js/main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    @RenderSection("extraScript", required: false)
+
+</body>
+</html>
